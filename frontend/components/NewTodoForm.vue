@@ -88,7 +88,7 @@ export default {
   data() {
     return {
       newTodo: null,
-      categories: ['Дом', 'Работа', 'Семья', 'Учеба'],
+      categories: ['Дом', 'Другое', 'Учеба'],
       valid: false,
       menu: false,
       nonEmptyField: text =>
