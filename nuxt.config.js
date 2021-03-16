@@ -42,8 +42,15 @@ export default {
 
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
+    '@nuxtjs/vuetify',
+    '@nuxtjs/appolo',
+    'cookie-universal-nuxt'
   ],
-
+apollo: {
+    clientConfigs: {
+      default: '~/plugins/appolo-client.js'
+    }
+},
   // Vuetify module configuration: https://go.nuxtjs.dev/config-vuetify
   vuetify: {
     customVariables: ['~/assets/variables.scss'],
