@@ -5,11 +5,13 @@
         <v-layout row wrap>
           <v-flex xs8>
             <!--Поле ввода имени задачи-->
+
             <v-text-field
               v-model="newTodo.title"
               :rules="[nonEmptyField]"
               label="Задача"
-              />
+              prepend-icon="mdi-lightbulb-outline"
+            />
           </v-flex>
           <v-flex xs4>
             <!--Поле выбора даты выполнения задачи-->
@@ -32,6 +34,7 @@
                   v-on="on"
                   label="Дата выполнения"
                   readonly
+                  prepend-icon="mdi-calendar-today"
                   />
               </template>
               <v-date-picker
@@ -41,7 +44,7 @@
                 locale="ru-ru"
                 first-day-of-week="1">
                 <v-spacer />
-                <v-btn @click="menu = false" flat color="primary">Отмена</v-btn>
+                <v-btn @click="menu = false" flat color="secondary">Отмена</v-btn>
                 <v-btn
                   @click="$refs.menu.save(newTodo.dueDate)"
                   flat
@@ -59,6 +62,8 @@
               hide-details
               rows="1"
               class="py-0 my-0"
+              prepend-icon="mdi-information-outline"
+
             />
           </v-flex>
         </v-layout>
@@ -72,6 +77,7 @@
           hide-details
           label="Категория"
           class="my-0 mx-2 mb-2 pt-0"
+          prepend-icon="mdi-hand-pointing-right"
         />
         <v-spacer />
         <v-btn :disabled="!valid" @click="add" color="blue lighten-1" flat
