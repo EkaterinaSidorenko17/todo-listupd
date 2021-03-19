@@ -1,7 +1,8 @@
 <template>
+  <v-banner elevation="12">
   <v-form ref="form" v-model="valid">
     <v-card>
-      <v-card-text class="pt-0 mt-0">
+      <v-card-text class="pt-0 mt-7">
         <v-layout row wrap>
           <v-flex xs8>
             <!--Поле ввода имени задачи-->
@@ -30,7 +31,7 @@
               <template v-slot:activator="{ on }">
                 <v-text-field
                   v-model="newTodo.dueDate"
-                  :rules="[nonemptyField]"
+                  :rules="[nonEmptyField]"
                   v-on="on"
                   label="Дата выполнения"
                   readonly
@@ -80,15 +81,18 @@
           prepend-icon="mdi-hand-pointing-right"
         />
         <v-spacer />
-        <v-btn :disabled="!valid" @click="add" color="blue lighten-1" flat
+        <v-btn :disabled="!valid" @click="add" color="blue lighten-3" flat
           >Добавить</v-btn
         >
-      </v-card-actions>
-    </v-card>
-  </v-form>
+        </v-card-actions>
+      </v-card>
+    </v-form>
+  </v-banner>
 </template>
 
 <script>
+import { ADD_TODO, GET_CATEGORIES, GET_TODO_LIST } from '../graphql'
+
 export default {
   name: 'NewTodoForm',
   data() {
@@ -98,17 +102,50 @@ export default {
       valid: false,
       menu: false,
       nonEmptyField: text =>
-        text ? !!text.length : 'Поле не должно быть пустым'
+        text ? !!text.length : 'Заполни поле',
+      loading: false
     }
   },
+  apollo: {
+    categories: {
+      query: GET_CATEGORIES,
+      update({ categories }) {
+        return categories.map(c => c.name)
+      }
+    }
+  },
+
   created() {
     this.clear()
   },
   methods: {
     add() {
-      this.$emit('add', this.newTodo)
-      this.clear()
-      this.$refs.form.reset()
+      this.loading = true
+      this.$apollo
+        .mutate({
+          mutation: ADD_TODO,
+          variables: {
+            ...this.newTodo
+          },
+          update: (store, { data: { addTodo } }) => {
+            const todoListData = store.readQuery({ query: GET_TODO_LIST })
+            todoListData.todoList.unshift(addTodo)
+            store.writeQuery({ query: GET_CATEGORIES, data: todoListData })
+            const categoriesData = store.readQuery({ query: GET_CATEGORIES })
+            const category = categoriesData.categories.find(
+              c => c.name === addTodo.category.name
+            )
+            if (!category) {
+              categoriesData.categories.push(addTodo.category)
+              store.writeQuery({ query: GET_CATEGORIES, data: categoriesData })
+            }
+          }
+        })
+      .then(() => {
+        this.clear()
+        this.loading = false
+        this.$refs.form.reset()
+      })
     },
     clear() {
       this.newTodo = {

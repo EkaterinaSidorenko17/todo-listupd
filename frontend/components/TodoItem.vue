@@ -1,18 +1,20 @@
 <template>
+  <v-banner elevation="7">
   <v-card>
-    <v-card-title class="pb-1" style="overflow-wrap: break-word;">
+    <v-card-title class="pb-3" style="overflow-wrap: break-word;">
       <b>{{ todo.title }}</b>
       <v-spacer />
       <v-btn
-        @click="$emit('delete', todo.id)"
+        @click="remove"
         flat
         small
+        icon
         style="position: absolute; right: 0; top: 0"
       >
-        <v-icon :disabled="$nuxt.isServer" small>close</v-icon>
+        <v-icon :disabled="$nuxt.isServer" small>mdi-close</v-icon>
       </v-btn>
     </v-card-title>
-    <v-card-text class="py-1">
+    <v-card-text class="pb-3">
       <v-layout row justyfy-center align-center>
         <v-flex xs11 style="overflow-wrap: break-word;">
           {{ todo.text }}
@@ -21,6 +23,7 @@
           <div style="text-align: right;">
             <v-checkbox
               v-model="todo.done"
+              @click.once="toggle"
               hide-details
               class="pa-0 ma-0"
               style="display: inline-block;"
@@ -32,24 +35,52 @@
     </v-card-text>
     <v-card-actions>
       <span class="grey--text">
-        Выполнить до {{ todo.dueDate }} | Создано
-         {{ todo.createdDate }}
+       <v-icon small>mdi-checkbox-marked-circle-outline</v-icon>  Выполнить до  {{ todo.dueDate }} | Создано
+        <v-icon small>mdi-calendar-today</v-icon> {{ todo.createdDate }}
       </span>
       <v-spacer />
       <span class="grey--text">
-        Категория: {{ todo.category }}
+        <v-icon small>mdi-hand-pointing-right</v-icon>Категория: {{ todo.category.name }}
       </span>
     </v-card-actions>
   </v-card>
+  </v-banner>
 </template>
 
 <script>
+import { GET_TODO_LIST, REMOVE_TODO, TOGGLE_TODO } from '../graphql'
+
 export default {
   name: 'TodoItem',
   props: {
     todo: {
       type: Object,
       default: () => ({})
+    }
+  },
+  methods: {
+    toggle() {
+      this.$apollo.mutate({
+        mutation: TOGGLE_TODO,
+        variables: {
+          todoId: this.todo.id
+        }
+      })
+    },
+    remove() {
+      const todoId = this.todo.id
+      this.$apollo.mutate({
+        mutation: REMOVE_TODO,
+        variables: {
+          todoId
+        },
+        update(store, {data: { removeTodo } }) {
+          if (!removeTodo) return
+          const data = store.readQuery({ query: GET_TODO_LIST })
+          data.todoList = data.todoList.filter(todo => todo.id !== todoId)
+          store.writeQuery({ query: GET_TODO_LIST, data })
+        }
+      })
     }
   }
 }

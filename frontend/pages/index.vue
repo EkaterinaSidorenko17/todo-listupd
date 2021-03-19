@@ -1,6 +1,6 @@
 <template>
   <v-layout row wrap justify-center>
-    <v-flex xs8 class="pb-1">
+    <v-flex xs8 class="pb-10">
       <new-todo-form />
     </v-flex>
     <v-flex v-for="todo of todoList" :key="todo.id" xs8 class="my-1">
