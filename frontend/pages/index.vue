@@ -26,3 +26,11 @@ export default {
   }
 }
 </script>
+
+<style>
+#app {
+  background: url('https://ohlaladani.com.br/wp-content/uploads/wallpaper-OHLALADANI_DESKTOP_WALLPAPERS_AVENTURA-2.jpg')
+    no-repeat center center fixed !important;
+  background-size: cover;
+}
+</style>

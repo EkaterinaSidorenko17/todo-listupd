@@ -1,7 +1,8 @@
 <template>
-  <v-banner elevation="12">
+  <v-main>
+    <v-container>
   <v-form ref="form" v-model="valid">
-    <v-card>
+    <v-card elevation="12">
       <v-card-text class="pt-0 mt-7">
         <v-layout row wrap>
           <v-flex xs8>
@@ -58,7 +59,6 @@
           <v-flex xs12>
             <v-textarea
               v-model="newTodo.text"
-              :rules="[nonEmptyField]"
               label="Описание"
               hide-details
               rows="1"
@@ -77,7 +77,7 @@
           :items="categories"
           hide-details
           label="Категория"
-          class="my-0 mx-2 mb-2 pt-0"
+          class="my-0 mx-2 mb-2 pt-3"
           prepend-icon="mdi-hand-pointing-right"
         />
         <v-spacer />
@@ -87,10 +87,12 @@
         </v-card-actions>
       </v-card>
     </v-form>
-  </v-banner>
+      </v-container>
+    </v-main>
 </template>
 
 <script>
+// импортируем свеженаписанные запросы
 import { ADD_TODO, GET_CATEGORIES, GET_TODO_LIST } from '../graphql'
 
 export default {
@@ -98,15 +100,16 @@ export default {
   data() {
     return {
       newTodo: null,
-      categories: ['Дом', 'Другое', 'Учеба'],
+      categories: ['home', 'work'],
       valid: false,
       menu: false,
       nonEmptyField: text =>
-        text ? !!text.length : 'Заполни поле',
-      loading: false
+        text ? !!text.length : 'Поле не должно быть пустым',
+      loading: false // индикация выполнения запроса
     }
   },
   apollo: {
+    // загрузка данных для селектора категорий
     categories: {
       query: GET_CATEGORIES,
       update({ categories }) {
@@ -114,7 +117,6 @@ export default {
       }
     }
   },
-
   created() {
     this.clear()
   },
@@ -127,11 +129,22 @@ export default {
           variables: {
             ...this.newTodo
           },
+          // кэш аполло позволяет манипулировать данными из этого кэша, вне зависимости
+          // от того, в каком компоненте выполняется код. Здесь в качестве ответа
+          // сервера мы получаем новую запись Todo. Добавляем её в кэш, записываем
+          // обратно по запросу GET_TODO_LIST, таким образом переменная Apollo
+          // сам разошлет всем подписчикам данного запроса измененные данные. В нашем
+          // случае подписчиком является переменная todoList в компоненте index.vue
           update: (store, { data: { addTodo } }) => {
+            // если в кэше отсутствуют данные по запросу, то бросится исключение
             const todoListData = store.readQuery({ query: GET_TODO_LIST })
             todoListData.todoList.unshift(addTodo)
             store.writeQuery({ query: GET_CATEGORIES, data: todoListData })
+
             const categoriesData = store.readQuery({ query: GET_CATEGORIES })
+            // В списке категорий ищем категорию новой записи Todo. При неудачном поиске
+            // добавляем в кэш. Таким образом селектор категорий всегда остается
+            // в актуальном состоянии
             const category = categoriesData.categories.find(
               c => c.name === addTodo.category.name
             )
@@ -141,11 +154,11 @@ export default {
             }
           }
         })
-      .then(() => {
-        this.clear()
-        this.loading = false
-        this.$refs.form.reset()
-      })
+        .then(() => {
+          this.clear()
+          this.loading = false
+          this.$refs.form.reset() // сброс валидации формы
+        })
     },
     clear() {
       this.newTodo = {
@@ -158,6 +171,14 @@ export default {
   }
 }
 </script>
+
+<style>
+#app {
+  background: url('https://ohlaladani.com.br/wp-content/uploads/wallpaper-OHLALADANI_DESKTOP_WALLPAPERS_AVENTURA-2.jpg')
+    no-repeat center center fixed !important;
+  background-size: cover;
+}
+</style>
 
 
 

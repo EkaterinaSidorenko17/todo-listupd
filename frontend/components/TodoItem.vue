@@ -1,6 +1,7 @@
 <template>
-  <v-banner elevation="7">
-  <v-card>
+  <v-main>
+    <v-container>
+  <v-card id="app" color="rgb(0, 0, 0, 0.2)" elevation="7">
     <v-card-title class="pb-3" style="overflow-wrap: break-word;">
       <b>{{ todo.title }}</b>
       <v-spacer />
@@ -27,7 +28,7 @@
               hide-details
               class="pa-0 ma-0"
               style="display: inline-block;"
-              color="green lighten-1"
+              color="green dark-1"
             />
           </div>
         </v-flex>
@@ -45,6 +46,8 @@
     </v-card-actions>
   </v-card>
   </v-banner>
+    </v-container>
+  </v-main>
 </template>
 
 <script>
@@ -85,3 +88,11 @@ export default {
   }
 }
 </script>
+
+<style>
+#app {
+  background: url('https://ohlaladani.com.br/wp-content/uploads/wallpaper-OHLALADANI_DESKTOP_WALLPAPERS_AVENTURA-2.jpg')
+    no-repeat center center fixed !important;
+  background-size: cover;
+}
+</style>
