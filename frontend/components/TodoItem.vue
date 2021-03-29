@@ -35,17 +35,16 @@
       </v-layout>
     </v-card-text>
     <v-card-actions>
-      <span class="grey--text">
+      <span class="black--text">
        <v-icon small>mdi-checkbox-marked-circle-outline</v-icon>  Выполнить до  {{ todo.dueDate }} | Создано
         <v-icon small>mdi-calendar-today</v-icon> {{ todo.createdDate }}
       </span>
       <v-spacer />
-      <span class="grey--text">
+      <span class="black--text">
         <v-icon small>mdi-hand-pointing-right</v-icon>Категория: {{ todo.category.name }}
       </span>
     </v-card-actions>
   </v-card>
-  </v-banner>
     </v-container>
   </v-main>
 </template>
@@ -91,7 +90,7 @@ export default {
 
 <style>
 #app {
-  background: url('https://ohlaladani.com.br/wp-content/uploads/wallpaper-OHLALADANI_DESKTOP_WALLPAPERS_AVENTURA-2.jpg')
+  background: url('https://images.wallpaperscraft.ru/image/ptitsa_nebo_gradient_125987_1920x1080.jpg')
     no-repeat center center fixed !important;
   background-size: cover;
 }

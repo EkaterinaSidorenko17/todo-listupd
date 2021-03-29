@@ -29,7 +29,7 @@ export default {
 
 <style>
 #app {
-  background: url('https://ohlaladani.com.br/wp-content/uploads/wallpaper-OHLALADANI_DESKTOP_WALLPAPERS_AVENTURA-2.jpg')
+  background: url('https://images.wallpaperscraft.ru/image/ptitsa_nebo_gradient_125987_1920x1080.jpg')
     no-repeat center center fixed !important;
   background-size: cover;
 }
